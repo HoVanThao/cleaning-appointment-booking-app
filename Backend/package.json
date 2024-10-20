@@ -18,12 +18,14 @@
     "migrate:show": "npm run typeorm -- migration:show -d ./src/config/data-source.ts"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.0.3",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "~1.4.6",
     "debug": "~4.3.5",
     "dotenv": "^16.4.5",
     "express": "~4.19.2",
     "express-validator": "^7.2.0",
+    "faker": "^6.6.6",
     "fs-extra": "^11.2.0",
     "http-errors": "~2.0.0",
     "jet-logger": "^1.3.1",
@@ -42,6 +44,7 @@
     "@types/cookie-parser": "^1.4.7",
     "@types/debug": "^4.1.12",
     "@types/express-validator": "^3.0.0",
+    "@types/faker": "^6.6.9",
     "@types/fs-extra": "^11.0.4",
     "@types/http-errors": "^2.0.4",
     "@types/jsonwebtoken": "^9.0.7",
