@@ -7,7 +7,7 @@ const Login = () => {
     return (
         <Wrapper>
             <div className='left-side'>
-                <form className='form'>
+                <form className='form-left'>
                     <h4>Đăng nhập</h4>
                     <FormRow type='email' name='email' placeholder='Nhập email của bạn' />
                     <FormRow type='password' name='Mật khẩu' placeholder='**********' />

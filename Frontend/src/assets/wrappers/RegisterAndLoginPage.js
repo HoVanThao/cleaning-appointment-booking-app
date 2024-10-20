@@ -17,9 +17,16 @@ const Wrapper = styled.section`
     background-color: #FFF8F8; 
   }
 
-  .form {
+  .form-left{
+    display: flow-root;
     max-width: 400px;
     border-top: 5px solid #102C57; 
+    width: 90vw;
+    background: var(--background-secondary-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-2);
+    padding: 2rem 2.5rem;
+    margin: 3rem auto;
   }
 
   h4 {
