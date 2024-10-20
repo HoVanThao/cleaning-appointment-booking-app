@@ -12,6 +12,7 @@ import {
   CleaningCompany,
   History,
   DetailCompany,
+  AppointmentForm
 } from "./pages";
 
 
@@ -63,7 +64,10 @@ const router = createBrowserRouter([
             path : 'detailcompany',
             element :<DetailCompany/>
           },
-          
+          {
+            path : 'appointmentform',
+            element :<AppointmentForm/>
+          },
         ],
       },
     ],

@@ -1,5 +1,6 @@
 import React from "react";
 import './DetailCompany.scss'
+import { NavLink } from "react-router-dom";
 const DetailCompany = () => {
     return (
         <div className="container">
@@ -32,7 +33,10 @@ const DetailCompany = () => {
                     />
                   </div>
                   <div className="button-container">
+                  <NavLink to='/dashboard/appointmentform'>
                     <button>Đặt lịch</button>
+                  </NavLink>
+                    
                   </div>
                 </div>
                     
