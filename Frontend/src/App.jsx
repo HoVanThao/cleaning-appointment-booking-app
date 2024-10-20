@@ -11,6 +11,7 @@ import {
   Logout,
   CleaningCompany,
   History,
+  DetailCompany,
 } from "./pages";
 
 
@@ -32,6 +33,8 @@ const router = createBrowserRouter([
         path: "login",
         element: <Login />,
       },
+    
+    
       {
         path: "dashboard",
         element: <DashboardLayout />,
@@ -56,6 +59,11 @@ const router = createBrowserRouter([
             path: "logout",
             element: <Logout />,
           },
+          {
+            path : 'detailcompany',
+            element :<DetailCompany/>
+          },
+          
         ],
       },
     ],
