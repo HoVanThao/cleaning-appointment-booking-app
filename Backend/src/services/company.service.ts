@@ -12,3 +12,19 @@ export const getCompanyByAccountId = async (accountId: number) => {
 
   return company;
 };
+
+export const getCompanyById = async (companyId: number) => {
+  const company = await Company.createQueryBuilder('company')
+    .leftJoinAndSelect('company.account', 'account')
+    .leftJoinAndSelect('company.ratingStatistics', 'ratingStatistics')
+    .where('company.company_id = :companyId', { companyId })
+    .select([
+      'company',
+      'account.email',
+      'ratingStatistics.rating',
+      'ratingStatistics.count',
+    ])
+    .getOne();
+
+  return company;
+};
