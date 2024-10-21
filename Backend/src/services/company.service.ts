@@ -28,3 +28,20 @@ export const getCompanyById = async (companyId: number) => {
 
   return company;
 };
+
+export const fetchAllCompanies = async (page: number, limit: number) => {
+  const [companies, totalCompanies] = await Company.createQueryBuilder('company')
+    .leftJoinAndSelect('company.account', 'account')
+    .leftJoinAndSelect('company.ratingStatistics', 'ratingStatistics')
+    .select([
+      'company',
+      'account.email',
+      'ratingStatistics.rating',
+      'ratingStatistics.count',
+    ])
+    .skip((page - 1) * limit)
+    .take(limit)
+    .getManyAndCount();
+
+  return { companies, totalCompanies };
+};
