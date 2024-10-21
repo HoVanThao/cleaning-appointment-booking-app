@@ -2,8 +2,8 @@ import axiosClient from "../utils/customFetch";
 
 const companyAPI = {
     getListCompany: (page) => {
-        const url = '/company';
-        return axiosClient.applicationNoAuth.get(url, { page: page, limit: 9 });
+        const url = `/company?page=${page}&limit=9`;
+        return axiosClient.application.get(url);
     },
 };
 

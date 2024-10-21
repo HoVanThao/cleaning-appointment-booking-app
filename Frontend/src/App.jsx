@@ -1,4 +1,7 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./contexts/AccountContext";
+import { useEffect } from "react";
 import {
   HomeLayout,
   Landing,
@@ -12,9 +15,8 @@ import {
   CleaningCompany,
   History,
   DetailCompany,
-  AppointmentForm
+  AppointmentForm,
 } from "./pages";
-
 
 const router = createBrowserRouter([
   {
@@ -34,8 +36,7 @@ const router = createBrowserRouter([
         path: "login",
         element: <Login />,
       },
-    
-    
+
       {
         path: "dashboard",
         element: <DashboardLayout />,
@@ -61,12 +62,12 @@ const router = createBrowserRouter([
             element: <Logout />,
           },
           {
-            path : 'detailcompany',
-            element :<DetailCompany/>
+            path: "detailcompany",
+            element: <DetailCompany />,
           },
           {
-            path : 'appointmentform',
-            element :<AppointmentForm/>
+            path: "appointmentform",
+            element: <AppointmentForm />,
           },
         ],
       },
@@ -75,6 +76,20 @@ const router = createBrowserRouter([
 ]);
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  useEffect(() => {
+    // Setup local storage
+
+    if (!localStorage.getItem("access_token")) {
+      localStorage.removeItem("access_token");
+    }
+    if (!localStorage.getItem("user_info")) {
+      localStorage.removeItem("user_info");
+    }
+  }, []);
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 };
 export default App;

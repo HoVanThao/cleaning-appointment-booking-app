@@ -29,25 +29,13 @@ const CleaningCompany = () => {
   const handleProvinceChange = (event) => {
     setSelectedProvince(event.target.value);
   };
-  const handlePageClick = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      const newPage = currentPage - 1;
-      setCurrentPage(newPage);
-    }
-  };
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      const newPage = currentPage + 1;
-      setCurrentPage(newPage);
-    }
+  const handleChange = (event, value) => {
+    console.log(value);
+    setCurrentPage(value);
   };
   const fetchCompanies = async () => {
     try {
+      console.log(currentPage);
       const response = await companyAPI.getListCompany(currentPage);
       console.log(response);
       setCompany(response.data.companies);
@@ -141,9 +129,8 @@ const CleaningCompany = () => {
           count={totalPages}
           variant="outlined"
           shape="rounded"
-          onChange={handlePageClick}
-          onNext={handleNextPage}
-          onPrevious={handlePrevPage}
+          page={currentPage}
+          onChange={handleChange}
         />
       </div>
     </div>
