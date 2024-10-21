@@ -3,7 +3,7 @@ import queryString from 'query-string';
 
 const axiosClient = {
   application: axios.create({
-    baseURL: "https://api.themoviedb.org/3",
+    baseURL: "https://cleaning-appointment-booking-app-2.onrender.com",
 
     headers: {
       'content-type': 'application/json',
@@ -12,7 +12,7 @@ const axiosClient = {
   }),
 
   applicationNoAuth: axios.create({
-    baseURL: "https://api.themoviedb.org/3",
+    baseURL: "https://cleaning-appointment-booking-app-2.onrender.com",
 
     headers: {
       'content-type': 'application/json',
@@ -21,7 +21,7 @@ const axiosClient = {
   }),
 
   formData: axios.create({
-    baseURL: "https://api.themoviedb.org/3",
+    baseURL: "https://cleaning-appointment-booking-app-2.onrender.com",
 
     headers: {
       'content-type': 'multipart/form-data',

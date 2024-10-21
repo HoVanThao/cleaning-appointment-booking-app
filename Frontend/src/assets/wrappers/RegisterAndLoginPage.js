@@ -17,9 +17,16 @@ const Wrapper = styled.section`
     background-color: #FFF8F8; 
   }
 
-  .form {
+  .form-left {
+    display: flow-root;
     max-width: 400px;
     border-top: 5px solid #102C57; 
+    width: 90vw;
+    background: var(--background-secondary-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-2);
+    padding: 2rem 2.5rem;
+    margin: 3rem auto;
   }
 
   h4 {
@@ -94,6 +101,20 @@ const Wrapper = styled.section`
 
   .forgot-password:hover {
     text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+
+    .right-side {
+      display: none;
+    }
+
+    .form-left {
+      max-width: 100%;
+      width: 100%;
+      padding: 1rem;
+    }
   }
 `;
 

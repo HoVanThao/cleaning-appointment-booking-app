@@ -4,11 +4,15 @@ import Pagination from "@mui/material/Pagination";
 import { FaArrowRight } from "react-icons/fa";
 import logo_company from "../assets/images/logo_company.png";
 import locationAPI from "../api/locationAPI";
+import companyAPI from "../api/companyAPI";
 import "./CleaningCompany.scss";
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink } from "react-router-dom";
 const CleaningCompany = () => {
   const [provinces, setProvinces] = useState([]);
   const [selectedProvince, setSelectedProvince] = useState("");
+  const [companies, setCompany] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   useEffect(() => {
     // Lấy danh sách tỉnh thành
     locationAPI
@@ -25,71 +29,36 @@ const CleaningCompany = () => {
   const handleProvinceChange = (event) => {
     setSelectedProvince(event.target.value);
   };
-  const companies = [
-    {
-      name: "Công ty 1",
-      location: "Đà Nẵng",
-      uses: 345,
-      price: "20,000₫",
-      logo: logo_company,
-    },
-    {
-      name: "Công ty 2",
-      location: "Hồ Chí Minh",
-      uses: 345,
-      price: "$45,129",
-      logo: logo_company,
-    },
-    {
-      name: "Công ty 3",
-      location: "Đà Nẵng, Hà Nội",
-      uses: 345,
-      price: "$45,129",
-      logo: logo_company,
-    },
-    {
-      name: "Công ty 4",
-      location: "Quảng Trị",
-      uses: 345,
-      price: "$45,129",
-      logo: logo_company,
-    },
-    {
-      name: "Công ty 5",
-      location: "Đà Nẵng, Quảng Nam",
-      uses: 345,
-      price: "$45,129",
-      logo: logo_company,
-    },
-    {
-      name: "Công ty 6",
-      location: "Vinh",
-      uses: 345,
-      price: "$45,129",
-      logo: logo_company,
-    },
-    {
-      name: "Công ty 7",
-      location: "Đà Nẵng",
-      uses: 345,
-      price: "$45,129",
-      logo: logo_company,
-    },
-    {
-      name: "Công ty 8",
-      location: "Bình Định",
-      uses: 345,
-      price: "$45,129",
-      logo: logo_company,
-    },
-    {
-      name: "Công ty 8",
-      location: "Bình Định",
-      uses: 345,
-      price: "$45,129",
-      logo: logo_company,
-    },
-  ];
+  const handlePageClick = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      const newPage = currentPage - 1;
+      setCurrentPage(newPage);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      const newPage = currentPage + 1;
+      setCurrentPage(newPage);
+    }
+  };
+  const fetchCompanies = async () => {
+    try {
+      const response = await companyAPI.getListCompany(currentPage);
+      console.log(response);
+      setCompany(response.data.companies);
+      setTotalPages(response.data.totalPages);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+  useEffect(() => {
+    fetchCompanies();
+  }, [currentPage]);
 
   return (
     <div className="user-list-cng-ty">
@@ -129,37 +98,38 @@ const CleaningCompany = () => {
                     <img
                       className="logo-company"
                       alt="Sellerlogo"
-                      src={company.logo}
+                      src={company.main_image}
                     />
                     <Typography variant="h6" className="heading-card">
-                      {company.name}
+                      {company.company_name}
                     </Typography>
                     <Typography className="text-card">
-                      {company.location}
+                      {company.address}
                     </Typography>
                   </div>
                   <div className="company-tk">
                     <div className="company-tk-uses">
                       <Typography className="content">
-                        {company.uses}
+                        {/* {company.uses} */}
+                        25
                       </Typography>
                       <Typography className="title">Lượt dùng</Typography>
                     </div>
                     <hr className="vertical-line" />
                     <div className="company-tk-cost">
                       <Typography className="content">
-                        {company.price}
+                        {company.service_cost}
                       </Typography>
                       <Typography className="title">Giá</Typography>
                     </div>
                   </div>
                   <hr className="hos-line" />
                   <div className="button-detail">
-                  <Link to='/dashboard/detailcompany' className='member-btn'>                       
-                    <Button variant="outlined" className="btn_detail">
-                      Xem chi tiết
-                      <FaArrowRight />
-                    </Button>
+                    <Link to="/dashboard/detailcompany" className="member-btn">
+                      <Button variant="outlined" className="btn_detail">
+                        Xem chi tiết
+                        <FaArrowRight />
+                      </Button>
                     </Link>
                   </div>
                 </CardContent>
@@ -167,7 +137,14 @@ const CleaningCompany = () => {
             </Grid>
           ))}
         </Grid>
-        <Pagination count={10} variant="outlined" shape="rounded" />
+        <Pagination
+          count={totalPages}
+          variant="outlined"
+          shape="rounded"
+          onChange={handlePageClick}
+          onNext={handleNextPage}
+          onPrevious={handlePrevPage}
+        />
       </div>
     </div>
   );
