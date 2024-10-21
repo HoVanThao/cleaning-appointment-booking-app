@@ -39,9 +39,6 @@ export class Company extends BaseEntity {
   @Column({ type: 'decimal' })
   service_cost: number;
 
-  @Column({ type: 'float' })
-  average_rating: number;
-
   @Column({ type: 'text', nullable: true })
   worktime: string;
 

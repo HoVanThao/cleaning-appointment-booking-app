@@ -30,7 +30,9 @@ export const getCompanyById = async (companyId: number) => {
 };
 
 export const fetchAllCompanies = async (page: number, limit: number) => {
-  const [companies, totalCompanies] = await Company.createQueryBuilder('company')
+  const [companies, totalCompanies] = await Company.createQueryBuilder(
+    'company'
+  )
     .leftJoinAndSelect('company.account', 'account')
     .leftJoinAndSelect('company.ratingStatistics', 'ratingStatistics')
     .select([

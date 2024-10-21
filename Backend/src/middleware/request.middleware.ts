@@ -30,7 +30,7 @@ export const validateRequest = (
   }
 
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  const timeRegex = /^\d{2}:\d{2}$/;
+  const timeRegex = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
 
   if (!dateRegex.test(request_date)) {
     return res
@@ -41,7 +41,7 @@ export const validateRequest = (
   if (!timeRegex.test(timejob)) {
     return res
       .status(400)
-      .json({ message: 'Invalid timejob format. Use HH:mm.' });
+      .json({ message: 'Invalid timejob format. Use YYYY-MM-DD HH:mm:ss.' });
   }
 
   const date = new Date(request_date);
@@ -71,11 +71,9 @@ export function validateUpdateRequest(
   // Kiểm tra nếu có user_id hoặc company_id được cung cấp
   if (req.body.user_id || req.body.company_id) {
     if (!req.body.user_id || !req.body.company_id) {
-      return res
-        .status(400)
-        .json({
-          message: 'User and Company IDs must be provided for creation',
-        });
+      return res.status(400).json({
+        message: 'User and Company IDs must be provided for creation',
+      });
     }
   }
 

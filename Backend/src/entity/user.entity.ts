@@ -25,8 +25,8 @@ export class User extends BaseEntity {
   @Column()
   phone_number: string;
 
-  @Column({ nullable: true })
-  avatar: string;
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  avatar: string | null;
 
   @CreateDateColumn()
   createdAt: Date;
