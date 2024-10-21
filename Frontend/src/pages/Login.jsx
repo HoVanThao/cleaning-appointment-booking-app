@@ -15,8 +15,15 @@ const Login = () => {
     try {
       const res = await LoginAPI.login(formData);
       const accessToken = res.data.token;
+      const User = res.data.userOrCompany;
+      const userInfo = {
+        name: User.full_name,
+        phone_number: User.phone_number,
+        email: User.account.email,
+      };
       if (accessToken) {
         localStorage.setItem("access_token", accessToken);
+        localStorage.setItem("user_info", JSON.stringify(userInfo));
         navigate("/dashboard");
       } else {
         setTextError("* Login failed, no access token received");
