@@ -24,7 +24,7 @@ const AppointmentForm = () => {
 
   return (
     <div>
-      <h3>Đặt lịch</h3>
+      <h3 className="h3-header">Đặt lịch</h3>
       <div className="appointment-form">
         <form onSubmit={handleSubmit}>
           {/* Left Side - Time, Name, Phone, Address */}
