@@ -3,7 +3,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-
+import cors from 'cors';
 import indexRouter from './routes/index';
 
 import 'reflect-metadata';
@@ -23,6 +23,14 @@ AppDataSource.initialize()
 
 // create and setup express app
 const app = express();
+
+
+app.use(
+  cors({
+    credentials: true,
+    origin: '*',
+  })
+);
 
 app.use(logger('dev'));
 app.use(express.json());
