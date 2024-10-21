@@ -33,7 +33,7 @@ export class Request {
   @Column()
   address: string;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'date' })
   request_date: Date;
 
   @Column({ type: 'enum', enum: RequestStatusEnum })
@@ -48,8 +48,8 @@ export class Request {
   @Column({ type: 'text' })
   request: string;
 
-  @Column({ type: 'time' })
-  timejob: string;
+  @Column({ type: 'datetime' })
+  timejob: Date;
 
   @CreateDateColumn()
   createdAt: Date;

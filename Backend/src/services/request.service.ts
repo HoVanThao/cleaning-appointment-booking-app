@@ -40,7 +40,7 @@ export class RequestService {
       name: data.name,
       phone: data.phone,
       address: data.address,
-      request_date: new Date(data.request_date), // Chuyển đổi sang Date nếu cần
+      request_date: new Date(data.request_date),
       timejob: data.timejob,
       status: data.status,
       price: data.price,

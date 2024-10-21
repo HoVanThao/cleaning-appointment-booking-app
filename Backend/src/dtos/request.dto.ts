@@ -7,7 +7,7 @@ export class CreateRequestDto {
   phone: string;
   address: string;
   request_date: string; // format: 'YYYY-MM-DD'
-  timejob: string; // format: 'HH:mm'
+  timejob: string;
   status: RequestStatusEnum;
   price: number;
   notes?: string;

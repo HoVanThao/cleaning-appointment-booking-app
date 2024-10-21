@@ -4,11 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  BaseEntity,
 } from 'typeorm';
 import { AccountRoleEnum } from '../enums/account.enum';
 import { UserStatusEnum } from '../enums/userStatus.enum';
 @Entity()
-export class Account {
+export class Account extends BaseEntity {
   @PrimaryGeneratedColumn()
   account_id: number;
 

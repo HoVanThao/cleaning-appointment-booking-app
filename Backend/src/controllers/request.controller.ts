@@ -59,7 +59,7 @@ export class RequestController {
     try {
       const id = parseInt(req.params.id, 10);
       await requestService.deleteRequest(id);
-      res.status(204).send();
+      res.status(200).json({ message: 'Đã xóa thành công' });
     } catch (error) {
       const err = error as Error;
       res.status(500).json({ message: err.message });
