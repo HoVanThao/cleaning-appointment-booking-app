@@ -56,7 +56,7 @@ const Wrapper = styled.aside`
     transition: var(--transition);
   }
   .nav-link:hover {
-    color: var(--primary-500);
+    color: #E98080;
   }
   .icon {
     font-size: 1.5rem;
@@ -65,7 +65,7 @@ const Wrapper = styled.aside`
     place-items: center;
   }
   .active {
-    color: var(--primary-500);
+    color: #E98080;
   }
 `;
 export default Wrapper;
