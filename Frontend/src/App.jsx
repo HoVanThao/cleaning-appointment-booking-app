@@ -62,7 +62,7 @@ const router = createBrowserRouter([
             element: <Logout />,
           },
           {
-            path: "detailcompany",
+            path: "detailcompany/:company_id",
             element: <DetailCompany />,
           },
           {
