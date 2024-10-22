@@ -1,7 +1,54 @@
-import React from "react";
+import React, { useState,useEffect } from "react";
 import './DetailCompany.scss'
 import { NavLink } from "react-router-dom";
+import { Link, useNavigate,useLocation,useParams } from "react-router-dom";
+
+import companyAPI from "../api/companyAPI";
+
 const DetailCompany = () => {
+
+  const [company,setCompany] = useState({});
+  const {company_id} = useParams();
+  console.log(company_id);
+  const [ratings,setRatings] = useState({
+    5:10,
+    4:30,
+    3:2,
+    2:5,
+    1:6
+  })
+  const handleSetRatings = (rat) =>{
+      rat.array.forEach(r => {
+        // setRatings({...ratings,})
+        console.log(r)
+        
+      });
+
+  }
+  const fetchDetailCompany = async() => {
+    try{
+      const response = await companyAPI.getDetailCompany(company_id);
+      console.log(response);
+      setCompany(response.data);
+      // if (response && response.data){
+      //   handleSetRatings(response?.data?.ratingStatistics);
+      // }  want set rating but bị undefined
+
+    }
+    catch(error){
+      console.console.error("Error fetching detail company: ",error);
+      
+    }
+
+  }
+  useEffect(() => {
+    fetchDetailCompany();
+  }, []);
+
+  console.log(company);
+
+
+
     return (
         <div className="container">
           <div className="main-content full-width"> 
@@ -10,30 +57,30 @@ const DetailCompany = () => {
               <div className="company-details">
                 <div className="image-section">
                   <img
-                    src="https://dplusvn.com/wp-content/uploads/2020/01/hinh-anh-van-phong-cong-ty-ggroup-2.jpg"
+                    src={company.main_image}
                     alt="product"
                     className="main-image"
                   />
                   <div className="thumbnail-section">
                     <img
-                      src="https://seaoffice.vn/wp-content/uploads/2019/09/van-phong-cho-thue-tai-TP-HCM.jpg"
+                      src={company.image2}
                       alt="thumbnail"
                     />
                     <img
-                      src="https://dplusvn.com/wp-content/uploads/2020/01/hinh-anh-van-phong-cong-ty-ggroup-2.jpg"
+                      src={company.image3}
                       alt="thumbnail"
                     />
                     <img
-                      src="https://storage.googleapis.com/digital-platform/hinh_anh_20_mau_thiet_ke_noi_that_van_phong_dep_and_chuyen_nghiep_so_2_ad3820a068/hinh_anh_20_mau_thiet_ke_noi_that_van_phong_dep_and_chuyen_nghiep_so_2_ad3820a068.jpg"
+                      src={company.image4}
                       alt="thumbnail"
                     />
                     <img
-                      src="https://storage.googleapis.com/digital-platform/hinh_anh_20_mau_thiet_ke_noi_that_van_phong_dep_and_chuyen_nghiep_so_2_ad3820a068/hinh_anh_20_mau_thiet_ke_noi_that_van_phong_dep_and_chuyen_nghiep_so_2_ad3820a068.jpg"
+                      src={company.image5}
                       alt="thumbnail"
                     />
                   </div>
                   <div className="button-container">
-                  <NavLink to='/dashboard/appointmentform'>
+                  <NavLink to='/dashboard/appointmentform?company_id=6'>
                     <button>Đặt lịch</button>
                   </NavLink>
                     
@@ -41,8 +88,8 @@ const DetailCompany = () => {
                 </div>
                     
                 <div className="info-section">
-                  <b style={{ fontSize: '16px' }}>Công ty 1 :</b>
-                  <p style={{ fontSize: '14px' }}>90.000đ / giờ</p>
+                  <b style={{ fontSize: '16px' }}>{company.name}</b>
+                  <p style={{ fontSize: '14px' }}>{company.service_cost}đ / giờ</p>
                   <b style={{ fontSize: '16px' }}>Giới thiệu:</b>
                   <p style={{ fontSize: '14px' }}>
                     Chuyên cung cấp các dịch vụ vệ sinh dọn dẹp tận nhà
@@ -55,9 +102,9 @@ const DetailCompany = () => {
                   <b style={{ fontSize: '16px' }}>Thời gian :</b>
                   <p style={{ fontSize: '14px' }}>Khung giờ làm việc</p>
                   <b style={{ fontSize: '16px' }}>Thông tin liên hệ:</b>
-                  <p style={{ fontSize: '14px' }}>Số điện thoại: 0123...</p>
-                  <p style={{ fontSize: '14px' }}>Email: demo@gmail.com</p>
-                  <p style={{ fontSize: '14px' }}>Địa chỉ: Đà Nẵng</p>
+                  <p style={{ fontSize: '14px' }}>Số điện thoại: {company.phone}</p>
+                  <p style={{ fontSize: '14px' }}>Email: {company?.account?.email ?? "abc@gmail.com"}</p>
+                  <p style={{ fontSize: '14px' }}>Địa chỉ: {company.address}</p>
                 </div>
               </div>
               <div className="reviews-and-contact">
@@ -65,48 +112,30 @@ const DetailCompany = () => {
                   <h3 style={{ fontSize: '18px' }}>Đánh giá & Nhận xét</h3>
                   <div className="rating-summary">
                     <div className="rating-score">
-                      <span className="score" style={{ fontSize: '24px' }}>4.5</span>
+                      <span className="score" style={{ fontSize: '24px' }}>5</span>
                       <div className="star-rating" style={{ fontSize: '18px' }}>
                         <span>⭐⭐⭐⭐⭐</span>
                       </div>
                       <p style={{ fontSize: '12px' }}>595 Verified Buyers</p>
                     </div>
                     <div className="rating-breakdown">
-                      <div className="rating-bar" style={{ fontSize: '12px' }}>
-                        <span>5 ⭐</span>
+
+                      {Object.entries(ratings).map(([name,value])=>(
+
+
+                       <div className="rating-bar" style={{ fontSize: '12px' }}>
+                        <span>{name} ⭐</span>
                         <div className="progress-bar">
                           <div className="fill" style={{ width: '85%' }}></div>
                         </div>
-                        <span>420</span>
-                      </div>
-                      <div className="rating-bar" style={{ fontSize: '12px' }}>
-                        <span>4 ⭐</span>
-                        <div className="progress-bar">
-                          <div className="fill" style={{ width: '60%' }}></div>
-                        </div>
-                        <span>90</span>
-                      </div>
-                      <div className="rating-bar" style={{ fontSize: '12px' }}>
-                        <span>3 ⭐</span>
-                        <div className="progress-bar">
-                          <div className="fill" style={{ width: '30%' }}></div>
-                        </div>
-                        <span>33</span>
-                      </div>
-                      <div className="rating-bar" style={{ fontSize: '12px' }}>
-                        <span>2 ⭐</span>
-                        <div className="progress-bar">
-                          <div className="fill" style={{ width: '10%' }}></div>
-                        </div>
-                        <span>12</span>
-                      </div>
-                      <div className="rating-bar" style={{ fontSize: '12px' }}>
-                        <span>1 ⭐</span>
-                        <div className="progress-bar">
-                          <div className="fill" style={{ width: '20%' }}></div>
-                        </div>
-                        <span>40</span>
-                      </div>
+                        <span>{value}</span>
+                      </div>   
+                      )
+
+                      )}
+
+                      
+                      
                     </div>
                   </div>
                 </div>

@@ -10,8 +10,11 @@ const DashboardContext = createContext();
 
 const DashboardLayout = () => {
     // temp
-    const user = { name: 'Hồ Văn Thảo' };
-
+    
+    const storedUserInfo = localStorage.getItem("user_info");
+    const user1 = storedUserInfo ? JSON.parse(storedUserInfo)?.name : "";
+    const user = { name: user1 };
+    console.log(user1)
     const [showSidebar, setShowSidebar] = useState(false);
 
 

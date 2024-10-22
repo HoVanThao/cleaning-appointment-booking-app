@@ -17,6 +17,7 @@ const Login = () => {
       const accessToken = res.data.token;
       const User = res.data.userOrCompany;
       const userInfo = {
+        user_id: User.user_id,
         name: User.full_name,
         phone_number: User.phone_number,
         email: User.account.email,

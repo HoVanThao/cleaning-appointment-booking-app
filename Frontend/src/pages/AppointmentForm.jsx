@@ -1,7 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./AppointmentForm.scss"; 
+import { Link, useNavigate,useLocation } from "react-router-dom";
+import {toast,ToastContainer} from 'react-toastify'
+import "react-toastify/dist/ReactToastify.css"
 
+// import ReactQuill from 'react-quill';
+// import 'react-quill/dist/quill.snow.css';
+
+
+import RequestAPI from "../api/requestAPI";
 const AppointmentForm = () => {
+  
+  const navigate = useNavigate();
+  const storedUserInfo = localStorage.getItem("user_info");
+    const user_id = storedUserInfo ? JSON.parse(storedUserInfo)?.user_id : "";
+
+  
+  
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  
+
+  const [minDateTime,setMinDateTime] = useState('');
+
+  const [textError, setTextError] = useState("");
+
+  useEffect(()=>{
+    const now = new Date();
+    now.setHours(now.getHours()+7);
+    now.setMinutes(now.getMinutes()+30);
+    const formattedDateTime = now.toISOString().slice(0, 16);
+    setMinDateTime(formattedDateTime); 
+     
+  },[]);
+
+
+  
   const [formData, setFormData] = useState({
     workContent: "",
     notes: "",
@@ -10,21 +44,74 @@ const AppointmentForm = () => {
     phoneNumber: "",
     location: "",
   });
+  
+  const fetchRequest = async(formData)=>{
+    try{
+      const res = await RequestAPI.createRequest(formData);
+      const status = res.status;
+      if (status ===201){
+        console.log("Create request success!!!!")
+        
+        toast.success("Tạo cuộc hẹn thành công",{
+          position:'top-right'
+        });
+
+
+        
+      }
+      console.log(res.data.message);
+    }
+    catch(error){
+      console.error("Error fetch create request : ", error);
+      toast.error("Tạo cuộc hẹn không thành công",{
+        position:'top-right'
+      });
+    }
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    
   };
+
+
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission here
+    const phoneRegex = /^[0-9]{9,10}$/; 
+    if (!phoneRegex.test(formData.phoneNumber)) {
+      setTextError('Please enter a valid phone number (9 or 10 digits).');
+      return; 
+    }// check phoneNumber
+    //convert formData to format body post api
+    const postData = {
+      user_id: user_id,
+      company_id: queryParams.get('company_id'),
+      name: formData.name,
+      phone: formData.phoneNumber,
+      address: formData.location,
+      request_date: formData.time.split("T")[0],
+      timejob: formData.time.replace("T"," ")+":00", 
+      status: "PENDING",
+      price: 100000,
+      notes: formData.notes,
+      request: formData.workContent, 
+    };
+
     console.log(formData);
+    console.log(postData);
+    fetchRequest(postData);
   };
 
   return (
     <div>
       <h3 className="h3-header">Đặt lịch</h3>
+
+
+      <ToastContainer />
+
       <div className="appointment-form">
         <form onSubmit={handleSubmit}>
           {/* Left Side - Time, Name, Phone, Address */}
@@ -37,11 +124,12 @@ const AppointmentForm = () => {
                 value={formData.workContent}
                 onChange={handleChange}
                 className="form-control"
+                required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="notes">Ghi chú</label>
+               <label htmlFor="notes">Ghi chú</label>
               <div className="toolbar">
                 <select>
                   <option value="normal">Normal</option>
@@ -71,6 +159,7 @@ const AppointmentForm = () => {
                 onChange={handleChange}
                 className="form-control"
               />
+              {/* <ReactQuill id="notes" theme="snow" value={formData.notes} onChange={handleChange} /> */}
             </div>
           </div>
 
@@ -85,7 +174,10 @@ const AppointmentForm = () => {
                 value={formData.time}
                 onChange={handleChange}
                 className="form-control-right"
+                min={minDateTime}
+                required
               />
+
             </div>
 
             <div className="form-group-right">
@@ -97,6 +189,7 @@ const AppointmentForm = () => {
                 value={formData.name}
                 onChange={handleChange}
                 className="form-control-right"
+                required
               />
             </div>
 
@@ -109,7 +202,9 @@ const AppointmentForm = () => {
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 className="form-control-right"
+                required
               />
+              {textError && <p style={{ color: 'red' }} className="error-text">{textError}</p>}
             </div>
 
             <div className="form-group-right">
@@ -121,6 +216,7 @@ const AppointmentForm = () => {
                 value={formData.location}
                 onChange={handleChange}
                 className="form-control-right"
+                required
               />
             </div>
 
