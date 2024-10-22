@@ -42,7 +42,7 @@ const Wrapper = styled.aside`
     }
     .nav-link:hover {
       padding-left: 3rem;
-      color: var(--primary-500);
+      color: #E98080;
       transition: var(--transition);
     }
     .icon {
@@ -52,7 +52,7 @@ const Wrapper = styled.aside`
       place-items: center;
     }
     .active {
-      color: var(--primary-500);
+      color: #E98080;
     }
     .pending {
       background: var(--background-color);
