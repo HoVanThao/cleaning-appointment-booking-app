@@ -51,7 +51,7 @@ const DetailCompany = () => {
                 {companyDetail.image5 && <img src={companyDetail.image5} alt="thumbnail" />}
               </div>
               <div className="button-container">
-                <NavLink to='/dashboard/appointmentform'>
+                <NavLink to={`/dashboard/appointmentform?companyId=${companyDetail.company_id}`}>
                   <button>Đặt lịch</button>
                 </NavLink>
               </div>
@@ -97,6 +97,7 @@ const DetailCompany = () => {
                     <span>4 ⭐</span>
                     <div className="progress-bar">
                       <div className="fill" style={{ width: `${(fourStarCount / totalReviews) * 100 || 0}%` }}></div>
+
                     </div>
                     <span>{fourStarCount}</span>
                   </div>
