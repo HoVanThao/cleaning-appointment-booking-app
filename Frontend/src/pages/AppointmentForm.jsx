@@ -72,7 +72,8 @@ const AppointmentForm = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
+    if (name==="phoneNumber")
+      setTextError("")
   };
 
 
@@ -88,7 +89,8 @@ const AppointmentForm = () => {
     //convert formData to format body post api
     const postData = {
       user_id: user_id,
-      company_id: queryParams.get('company_id'),
+      company_id: queryParams.get('companyId'),
+
       name: formData.name,
       phone: formData.phoneNumber,
       address: formData.location,
