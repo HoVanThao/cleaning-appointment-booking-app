@@ -1,6 +1,18 @@
 .container {
+    padding: 20px;
+  }
+  
+  .main-content {
     display: flex;
     flex-direction: column;
+    h1 {
+      font-size: 1.5rem; 
+      margin-bottom: 20px; 
+    }
+  }
+  
+  .company-details {
+=======
     height: auto;
     font-family: 'Arial', sans-serif;
     width: 100% !important;
@@ -39,148 +51,126 @@
 .thumbnail-section {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
-}
-.thumbnail-section img {
-    width: 18%;
-    border-radius: 8px;
-    object-fit: cover;
-    cursor: pointer;
-    border: 2px solid transparent;
-}
-.thumbnail-section img:hover {
-    border: 2px solid #d9534f; 
-}
-.info-section {
-    background-color: #f9f9f9;
-    padding: 20px; 
-    border-radius: 10px;
-    font-size: 18px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  
+  .image-section {
     flex: 1;
-    overflow-y: auto; 
-    min-height: 350px;
-    max-height: 450px;
-}
-.info-section {
-    min-height: 300px; 
-    max-height: 400px;
-}
-.info-section b {
-    font-size: 16px;
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-}
-.info-section p {
-    font-size: 16px;
-    margin-bottom: 16px;
-}
-.info-section p:last-child {
-    margin-bottom: 0;
-}
-.reviews-and-contact {
+    margin-right: 20px;
+  
+    .main-image {
+      width: 100%;
+      height: auto;
+    }
+  
+    .thumbnail-section {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+  
+      img {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+      }
+    }
+  }
+  
+  .info-section {
+    flex: 1;
+  
+    h2 {
+      margin-bottom: 10px;
+      font-size: 24px;
+    }
+  
+    p {
+      margin: 5px 0;
+      font-size: 18px; 
+    }
+  
+    b {
+      font-size: 18px; 
+    }
+  
+   
+  }
+  .button-booking {
+    padding: 8px 16px; 
     margin-top: 20px;
-}
-.reviews {
-    background-color: #f9f9f9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-}
-.image-section button {
-    background-color: #d9534f;
-    color: white;
+    margin-left: auto; 
+    background-color: #ff4d4f;
+    color: white; 
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    border-radius: 5px; 
     cursor: pointer;
-    margin-top: 10px;
-    align-self: flex-end;
-}
-.image-section button:hover {
-    background-color: #c9302c;
-}
-.button-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
-}
-.rating-summary {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 20px;
-    background-color: #fefefe; 
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-}
-
-.rating-score {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.score {
-    font-size: 40px; 
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.star-rating {
-    font-size: 24px;
-    color: #ffc107; 
-}
-
-.rating-breakdown {
-    flex-grow: 1;
-    margin-left: 20px;
-}
-
-.rating-bar {
-    display: flex;
-    align-items: center;
-    margin-bottom: 8px;
-    font-size: 14px;
-}
-
-.rating-bar span {
-    width: 30px;
-    text-align: right;
-    margin-right: 10px;
-}
-
-.progress-bar {
-    flex-grow: 1;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-    height: 12px; 
-    margin-right: 10px;
-    overflow: hidden;
-}
-
-.fill {
-    height: 100%;
-    background-color: #28a745;
-}
-
-.verified-buyers {
-    font-size: 14px;
-    color: #555;
-    margin-top: 5px;
-    text-align: center;
-}
-
-@media (max-width: 768px) {
+    font-size: 16px; 
+    font-weight: bold; 
+    transition: background-color 0.3s ease, transform 0.2s ease; 
+  
+    &:hover {
+      background-color: #d9363e; 
+      transform: scale(1.05); 
+    }
+  
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  
+  .reviews-section {
+    h3 {
+      font-size: 22px; 
+      margin-bottom: 10px; 
+    }
+  
     .rating-summary {
-        flex-direction: column; 
-        align-items: flex-start;
+      display: flex;
+      gap: 20px;
+      width: 100%; 
+  
+      .rating-score {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+  
+        .score {
+          font-size: 28px; 
+          font-weight: bold;
+        }
+  
+        .star-rating {
+          font-size: 18px; 
+          color: gold;
+        }
+  
+        p {
+          margin-top: 5px; 
+          font-size: 14px; 
+        }
+      }
+  
+      .rating-breakdown {
+        .rating-bar {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 14px; 
+          margin-bottom: 5px;
+  
+          .progress-bar {
+            width: 320px; 
+            height: 10px; 
+            background-color: #e0e0e0;
+            border-radius: 5px;
+  
+            .fill {
+              height: 100%;
+              background-color: #4caf50;
+              border-radius: 5px;
+            }
+          }
+        }
+      }
     }
-    .rating-score {
-        margin-bottom: 10px;
-    }
-}
+  }
+  
