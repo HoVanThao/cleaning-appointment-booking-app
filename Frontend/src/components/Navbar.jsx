@@ -12,10 +12,10 @@ const Navbar = () => {
                 <button type='button' className='toggle-btn' onClick={toggleSidebar}>
                     <FaAlignLeft />
                 </button>
-                <div>
+                {/* <div>
                     <Logo />
-                    <h4 className='logo-text'>dashboard</h4>
-                </div>
+                    <h4 className='logo-text'></h4>
+                </div> */}
                 <div className='btn-container'>
                     <LogoutContainer />
                 </div>
