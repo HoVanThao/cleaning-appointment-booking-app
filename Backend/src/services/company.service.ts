@@ -52,7 +52,7 @@ export const fetchAllCompanies = async (page: number, limit: number, location: s
 
   // Thêm điều kiện lọc theo địa điểm
   if (location) {
-    query.andWhere('company.address LIKE :location', { location: `%${location}%` });
+    query.andWhere('company.address_tinh LIKE :location', { location: `%${location}%` });
   }
 
   // Thêm điều kiện tìm kiếm theo tên công ty
