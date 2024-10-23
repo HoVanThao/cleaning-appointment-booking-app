@@ -7,8 +7,8 @@
     flex-direction: column;
   
     h1 {
-      font-size: 1.5rem; // Reduced size for the main title
-      margin-bottom: 20px; // Spacing below the title
+      font-size: 1.5rem; 
+      margin-bottom: 20px; 
     }
   }
   
@@ -45,53 +45,52 @@
   
     h2 {
       margin-bottom: 10px;
-      font-size: 24px; // Increased size for company name
+      font-size: 24px;
     }
   
     p {
       margin: 5px 0;
-      font-size: 18px; // Increased size for service details
+      font-size: 18px; 
     }
   
     b {
-      font-size: 18px; // Make bold text larger
+      font-size: 18px; 
     }
   
    
   }
   .button-booking {
-    padding: 8px 16px; // Giảm padding để nút nhỏ hơn
+    padding: 8px 16px; 
     margin-top: 20px;
-    margin-left: auto; // Dịch sang bên phải
-    background-color: #ff4d4f; // Màu nền đỏ
-    color: white; // Màu chữ trắng
+    margin-left: auto; 
+    background-color: #ff4d4f;
+    color: white; 
     border: none;
-    border-radius: 5px; // Bo góc
+    border-radius: 5px; 
     cursor: pointer;
-    font-size: 16px; // Giảm kích thước phông chữ
-    font-weight: bold; // Đậm
-    transition: background-color 0.3s ease, transform 0.2s ease; // Hiệu ứng chuyển tiếp
+    font-size: 16px; 
+    font-weight: bold; 
+    transition: background-color 0.3s ease, transform 0.2s ease; 
   
     &:hover {
-      background-color: #d9363e; // Màu nền đỏ đậm khi hover
-      transform: scale(1.05); // Phóng to khi hover
+      background-color: #d9363e; 
+      transform: scale(1.05); 
     }
   
-    // Thêm bóng cho nút
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
   
   .reviews-section {
     h3 {
-      font-size: 22px; // Adjusted size for the section title
-      margin-bottom: 10px; // Spacing below the title
+      font-size: 22px; 
+      margin-bottom: 10px; 
     }
   
     .rating-summary {
       display: flex;
       gap: 20px;
-      width: 100%; // Make the rating summary take full width of the container
+      width: 100%; 
   
       .rating-score {
         display: flex;
@@ -99,18 +98,18 @@
         align-items: center;
   
         .score {
-          font-size: 28px; // Adjusted size for the rating score
+          font-size: 28px; 
           font-weight: bold;
         }
   
         .star-rating {
-          font-size: 18px; // Adjusted size for star rating
+          font-size: 18px; 
           color: gold;
         }
   
         p {
-          margin-top: 5px; // Reduced margin for the verified buyers text
-          font-size: 14px; // Adjusted size for verified buyers text
+          margin-top: 5px; 
+          font-size: 14px; 
         }
       }
   
@@ -119,12 +118,12 @@
           display: flex;
           align-items: center;
           gap: 10px;
-          font-size: 14px; // Adjusted size for the rating breakdown
+          font-size: 14px; 
           margin-bottom: 5px;
   
           .progress-bar {
-            width: 320px; // Increase the width of the progress bar
-            height: 10px; // Keep height consistent
+            width: 320px; 
+            height: 10px; 
             background-color: #e0e0e0;
             border-radius: 5px;
   
