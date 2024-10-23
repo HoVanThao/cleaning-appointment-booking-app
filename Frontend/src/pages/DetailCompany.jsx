@@ -78,7 +78,10 @@ const DetailCompany = () => {
                   <img src={companyDetail.image2} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image2, 'image2')} />}
                 {companyDetail.image3 &&
                   <img src={companyDetail.image3} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image3, 'image3')} />}
-                
+                {companyDetail.image4 &&
+                  <img src={companyDetail.image4} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image4, 'image4')} />}
+                {companyDetail.image5 &&
+                  <img src={companyDetail.image5} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image5, 'image5')} />}
               </div>
 
               <NavLink to={`/dashboard/appointmentform?companyId=${companyDetail.company_id}`}>
@@ -106,9 +109,9 @@ const DetailCompany = () => {
               <b>Thông tin liên hệ:</b>
               <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}><FontAwesomeIcon icon={faPhone} /> Số điện thoại: {companyDetail.phone}</p><br />
               <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}><FontAwesomeIcon icon={faEnvelope} /> Email: {companyDetail.account.email}</p><br />
-              <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}><FontAwesomeIcon icon={faMapMarkerAlt} /> Địa chỉ: {companyDetail.address}</p><br />
+              <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}><FontAwesomeIcon icon={faMapMarkerAlt} /> Địa chỉ: {companyDetail.address} , {companyDetail.address_tinh}</p><br />
             </div>
-          </div><br/>
+          </div><br />
           <div className="reviews-section">
             <h3><b>Đánh Giá & Nhận Xét</b></h3>
             <div className="rating-summary">
