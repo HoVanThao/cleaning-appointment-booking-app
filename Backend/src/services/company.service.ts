@@ -35,6 +35,7 @@ export const getCompanyById = async (companyId: number) => {
 };
 
 
+
 export const fetchAllCompanies = async (page: number, limit: number, location: string, name: string) => {
   const companyRepository = AppDataSource.getRepository(Company); // Lấy repository của Company
   const requestRepository = AppDataSource.getRepository(Request); // Lấy repository của Request
@@ -42,12 +43,12 @@ export const fetchAllCompanies = async (page: number, limit: number, location: s
   const query: SelectQueryBuilder<Company> = companyRepository
     .createQueryBuilder('company')
     .leftJoinAndSelect('company.account', 'account')
-    .leftJoinAndSelect('company.ratingStatistics', 'ratingStatistics')
     .select([
-      'company',
-      'account.email',
-      'ratingStatistics.rating',
-      'ratingStatistics.count',
+      'company.company_id',
+      'company.company_name',
+      'company.address_tinh',
+      'company.service_cost',
+      'company.main_image',
     ]);
 
   // Thêm điều kiện lọc theo địa điểm
@@ -73,14 +74,20 @@ export const fetchAllCompanies = async (page: number, limit: number, location: s
       .andWhere('request.status = :status', { status: RequestStatusEnum.COMPLETED })
       .getCount();
 
+
     return {
-      ...company,
+      company_id: company.company_id,
+      company_name: company.company_name,
+      address_tinh: company.address_tinh,
+      service_cost: company.service_cost,
+      main_image: company.main_image,
       completedRequestsCount,
     };
   }));
 
   return { companies: companiesWithRequestCount, totalCompanies };
 };
+
 
 
 
