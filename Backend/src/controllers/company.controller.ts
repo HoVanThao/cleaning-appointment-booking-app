@@ -25,13 +25,15 @@ export const getCompanyDetails = async (req: Request, res: Response) => {
 export const getAllCompanies = async (req: Request, res: Response) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
+  const location = req.query.location as string || '';
+  const name = req.query.name as string || '';
 
   try {
-    const { companies, totalCompanies } = await fetchAllCompanies(page, limit);
+    const { companies, totalCompanies } = await fetchAllCompanies(page, limit, location, name);
     const totalPages = Math.ceil(totalCompanies / limit);
 
     return res.status(200).json({
-      companies,
+      companies,  // Trả về danh sách công ty kèm theo completedRequestsCount
       totalCompanies,
       totalPages,
       currentPage: page,
