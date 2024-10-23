@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, NavLink } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPhone, faMapMarkerAlt, faEnvelope, faMoneyBill, faCalendar } from '@fortawesome/free-solid-svg-icons';
+import { faPhone, faMapMarkerAlt, faEnvelope, faMoneyBill, faCalendar, faStar } from '@fortawesome/free-solid-svg-icons'; // import icon star
 import './DetailCompany.scss';
 import companyAPI from "../api/companyAPI";
 
@@ -33,8 +33,32 @@ const DetailCompany = () => {
 
   const totalReviews = companyDetail.ratingStatistics.reduce((acc, stat) => acc + stat.count, 0);
 
-  const handleThumbnailClick = (image) => {
-    setMainImage(image);
+  const handleThumbnailClick = (image, imageKey) => {
+    setCompanyDetail(prevDetails => {
+      // Hoán đổi ảnh chính và ảnh được nhấn
+      const updatedDetail = { ...prevDetails, [imageKey]: mainImage };
+      setMainImage(image); // Cập nhật ảnh chính
+      return updatedDetail;
+    });
+  };
+
+  // Hàm hiển thị số sao dựa trên rating
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating); // Số sao đầy đủ
+    const halfStar = rating % 1 >= 0.5; // Sao nửa nếu rating có phần thập phân >= 0.5
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0); // Số sao trống
+
+    return (
+      <>
+        {[...Array(fullStars)].map((_, index) => (
+          <FontAwesomeIcon key={`full-${index}`} icon={faStar} style={{ color: 'gold' }} />
+        ))}
+        {halfStar && <FontAwesomeIcon icon={faStar} style={{ color: 'gold' }} />}
+        {[...Array(emptyStars)].map((_, index) => (
+          <FontAwesomeIcon key={`empty-${index}`} icon={faStar} style={{ color: '#e0e0e0' }} />
+        ))}
+      </>
+    );
   };
 
   return (
@@ -50,15 +74,13 @@ const DetailCompany = () => {
                 className="main-image"
               />
               <div className="thumbnail-section">
-                {companyDetail.image2 && 
-                  <img src={companyDetail.image2} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image2)} />}
-                {companyDetail.image3 && 
-                  <img src={companyDetail.image3} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image3)} />}
-                {companyDetail.image4 && 
-                  <img src={companyDetail.image4} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image4)} />}
-                {companyDetail.image5 && 
-                  <img src={companyDetail.image5} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image5)} />}
+                {companyDetail.image2 &&
+                  <img src={companyDetail.image2} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image2, 'image2')} />}
+                {companyDetail.image3 &&
+                  <img src={companyDetail.image3} alt="thumbnail" onClick={() => handleThumbnailClick(companyDetail.image3, 'image3')} />}
+                
               </div>
+
               <NavLink to={`/dashboard/appointmentform?companyId=${companyDetail.company_id}`}>
                 <button className="button-booking">Đặt lịch</button>
               </NavLink>
@@ -66,10 +88,10 @@ const DetailCompany = () => {
 
             <div className="info-section">
               <h2 style={{ fontSize: '30px', fontWeight: 'bold' }}>{companyDetail.company_name}</h2>
-              <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}> 
-                <FontAwesomeIcon icon={faMoneyBill} style={{ marginRight: '8px' }} /> 
-                {companyDetail.service_cost} đ / giờ 
-              </p>  
+              <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}>
+                <FontAwesomeIcon icon={faMoneyBill} style={{ marginRight: '8px' }} />
+                {companyDetail.service_cost} đ / giờ
+              </p>
               <br />
               <p><b>Giới thiệu:</b></p>
               <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}>{companyDetail.description}</p>
@@ -81,20 +103,19 @@ const DetailCompany = () => {
               <p><FontAwesomeIcon icon={faCalendar} style={{ marginLeft: '10px' }} /> Khung giờ làm việc :</p>
               <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}>{companyDetail.worktime}</p>
               <br />
-              <b>Thông tin liên hệ:</b> 
+              <b>Thông tin liên hệ:</b>
               <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}><FontAwesomeIcon icon={faPhone} /> Số điện thoại: {companyDetail.phone}</p><br />
               <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}><FontAwesomeIcon icon={faEnvelope} /> Email: {companyDetail.account.email}</p><br />
               <p style={{ fontWeight: 'normal', color: '#555', marginLeft: '10px' }}><FontAwesomeIcon icon={faMapMarkerAlt} /> Địa chỉ: {companyDetail.address}</p><br />
             </div>
-          </div>
-
+          </div><br/>
           <div className="reviews-section">
             <h3><b>Đánh Giá & Nhận Xét</b></h3>
             <div className="rating-summary">
               <div className="rating-score">
                 <span className="score">{(companyDetail.ratingStatistics.reduce((acc, stat) => acc + (stat.rating * stat.count), 0) / totalReviews).toFixed(1)}</span>
                 <div className="star-rating">
-                  <span>⭐⭐⭐⭐⭐</span>
+                  {renderStars((companyDetail.ratingStatistics.reduce((acc, stat) => acc + (stat.rating * stat.count), 0) / totalReviews).toFixed(1))}
                 </div>
                 <p>{totalReviews} Lượt đánh giá</p>
               </div>
