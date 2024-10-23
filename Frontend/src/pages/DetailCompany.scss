@@ -1,8 +1,9 @@
 .container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: auto;
     font-family: 'Arial', sans-serif;
+    width: 100% !important;
 }
 .main-content.full-width {
     padding: 40px;
