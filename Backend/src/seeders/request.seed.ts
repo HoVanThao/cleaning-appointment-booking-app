@@ -5,31 +5,48 @@ import { Request } from '../entity/request.entity';
 import { RequestStatusEnum } from '../enums/requestStatus.enum';
 
 export async function seedRequests() {
-  const userRepository = AppDataSource.getRepository(User);
-  const companyRepository = AppDataSource.getRepository(Company);
+  // const userRepository = AppDataSource.getRepository(User);
+  // const companyRepository = AppDataSource.getRepository(Company);
+  // const requestRepository = AppDataSource.getRepository(Request);
+
+  // const users = await userRepository.find();
+  // const companies = await companyRepository.find();
+
+  // for (let i = 22; i <= 30; i++) {
+  //   const request = new Request();
+  //   request.user = users[i % users.length]; // Chọn ngẫu nhiên người dùng
+  //   request.company = companies[i % companies.length]; // Chọn ngẫu nhiên công ty
+  //   request.name = `Khách hàng ${i}`;
+  //   request.phone = `012345678${i}`;
+  //   request.address = `Địa chỉ ${i}`;
+  //   request.status = RequestStatusEnum.COMPLETED; // Giả sử trạng thái đang chờ
+  //   request.price = Math.floor(Math.random() * 1000000); // Giá ngẫu nhiên
+  //   request.notes = `Ghi chú cho yêu cầu ${i}`;
+  //   request.request = `Yêu cầu từ khách hàng ${i}`;
+  //   request.request_date = new Date();
+  //   request.timejob = new Date(`2024-11-06 14:00:00`);
+  //   request.request_date = new Date();
+  //   request.workingHours = parseFloat((Math.random() + 1).toFixed(1));
+
+  //   await requestRepository.save(request);
+  // }
+}
+
+export async function updateWorkingHours() {
   const requestRepository = AppDataSource.getRepository(Request);
 
-  const users = await userRepository.find();
-  const companies = await companyRepository.find();
+  // Tìm tất cả các yêu cầu có trạng thái COMPLETED
+  const completedRequests = await requestRepository.find({
+    where: { status: RequestStatusEnum.COMPLETED },
+  });
 
-  for (let i = 22; i <= 30; i++) {
-    const request = new Request();
-    request.user = users[i % users.length]; // Chọn ngẫu nhiên người dùng
-    request.company = companies[i % companies.length]; // Chọn ngẫu nhiên công ty
-    request.name = `Khách hàng ${i}`;
-    request.phone = `012345678${i}`;
-    request.address = `Địa chỉ ${i}`;
-    request.status = RequestStatusEnum.COMPLETED; // Giả sử trạng thái đang chờ
-    request.price = Math.floor(Math.random() * 1000000); // Giá ngẫu nhiên
-    request.notes = `Ghi chú cho yêu cầu ${i}`;
-    request.request = `Yêu cầu từ khách hàng ${i}`;
-    request.request_date = new Date();
-    request.timejob = new Date(`2024-11-06 14:00:00`);
-    request.request_date = new Date();
-    request.workingHours = parseFloat((Math.random() + 1).toFixed(1));
-
+  // Cập nhật workingHours cho mỗi yêu cầu COMPLETED
+  for (const request of completedRequests) {
+    request.workingHours = parseFloat((Math.random() * 8).toFixed(1)); // Thời gian làm việc ngẫu nhiên từ 0.0 - 8.0 giờ
     await requestRepository.save(request);
   }
 
-
+  console.log(
+    'Đã cập nhật workingHours cho các yêu cầu có trạng thái COMPLETED!'
+  );
 }

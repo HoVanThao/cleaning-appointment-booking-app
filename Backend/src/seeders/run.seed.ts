@@ -1,12 +1,12 @@
 import { AppDataSource } from '../config/data-source';
-import { seedCustomers } from '../seeders/user.seed';
+import { seedCustomers, updateUserAddressTinh } from '../seeders/user.seed';
 import {
   seedCompanies,
   updateCompanyAddressTinh,
   updateCompanyImage,
 } from '../seeders/company.seed';
 import { seedRatingStatistics } from '../seeders/ratingStatistic.seed';
-import { seedRequests } from '../seeders/request.seed';
+import { seedRequests, updateWorkingHours } from '../seeders/request.seed';
 import { seedReviews } from '../seeders/review.seed';
 import { seedStatistics } from '../seeders/statistic.seed';
 import { seedTodos } from '../seeders/todo.seed';
@@ -27,6 +27,8 @@ async function runSeed() {
   // await seedTodoRepeats();
   // await updateCompanyAddressTinh();
   // await updateCompanyImage();
+  // await updateUserAddressTinh();
+  await updateWorkingHours();
 
   // Đóng kết nối
   await AppDataSource.destroy();
