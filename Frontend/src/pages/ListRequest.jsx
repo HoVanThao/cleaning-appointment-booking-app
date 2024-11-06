@@ -1,135 +1,126 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import { RequestDetails } from "./RequestDetails";
 import Pagination from "@mui/material/Pagination";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import avatar1 from "../assets/images/avatar-1.jpg";
 import "./ListRequest.scss";
-
-// Fake data
-const fakeData = [
-  {
-    id: 1,
-    name: "Harold Gonzalez",
-    phone: "937-330-1634",
-    date: "03/24/2023",
-    hours: 1,
-    price: 200000,
-    status: "Hoàn thành",
-    avatar: avatar1,
-  },
-  {
-    id: 2,
-    name: "Anthony Anderson",
-    phone: "828-216-2190",
-    date: "04/09/2023",
-    hours: 1,
-    price: 900000,
-    status: "Hủy",
-    avatar: avatar1,
-  },
-  {
-    id: 3,
-    name: "Gary Faulkner",
-    phone: "215-302-3276",
-    date: "03/24/2023",
-    hours: 1,
-    price: 2000000,
-    status: "Hoàn thành",
-    avatar: avatar1,
-  },
-  {
-    id: 4,
-    name: "Steve Nelson",
-    phone: "937-330-1634",
-    date: "05/06/2023",
-    hours: 1,
-    price: 120000,
-    status: "Chờ xử lý",
-    avatar: avatar1,
-  },
-  {
-    id: 5,
-    name: "Kimberly Sullivan",
-    phone: "937-330-1634",
-    date: "06/19/2023",
-    hours: 1,
-    price: 320000,
-    status: "Đang xử lý",
-    avatar: avatar1,
-  },
-  {
-    id: 6,
-    name: "Susan Pugh",
-    phone: "937-330-1634",
-    date: "06/30/2023",
-    hours: 1,
-    price: 890000,
-    status: "Hoàn thành",
-    avatar: avatar1,
-  },
-];
-
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import RequestAPI from "../api/requestAPI";
+import { toast, ToastContainer } from "react-toastify";
+import LoadingOverlay from "../components/loading_overlay";
 const statusOptions = [
-  "Hoàn thành",
-  "Hủy",
-  "Đang xử lý",
-  "Chờ xử lý",
-  "Không xác định",
+  { label: "Hoàn thành", value: "COMPLETED" },
+  { label: "Hủy", value: "REJECTED" },
+  { label: "Đã chấp nhận", value: "ACCEPTED" },
+  { label: "Chờ xử lý", value: "PENDING" },
 ];
 
 const statusColors = {
-  "Hoàn thành": "#065f46",
-  Hủy: "#b91c1c",
-  "Đang xử lý": "#92400e",
-  "Chờ xử lý": "#1e40af",
-  "Không xác định": "gray",
+  COMPLETED: "rgba(6, 95, 70, 0.5)",
+  REJECTED: "rgba(185, 28, 28, 0.5)",
+  PENDING: "rgba(30, 64, 175, 0.5)",
+  ACCEPTED: "rgba(146, 64, 14, 0.5)",
+};
+
+const translateStatus = (status) => {
+  const statusMap = {
+    COMPLETED: "Hoàn thành",
+    REJECTED: "Hủy",
+    ACCEPTED: "Đã chấp nhận",
+    PENDING: "Chờ xử lý",
+  };
+  return statusMap[status] || "Không xác định";
 };
 
 export const ListRequest = () => {
-  const [data, setData] = useState(
-    fakeData.map((item) => ({
-      ...item,
-      status: item.status || "Không xác định", // Đặt giá trị mặc định là "Không xác định" nếu không có giá trị
-    }))
-  );
-
+  const [data, setData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const handleStatusChange = (id, value) => {
-    setData((prevData) =>
-      prevData.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status: value,
-              hours: value === "Hoàn thành" ? 1 : item.hours,
-            }
-          : item
-      )
-    );
+  const companyInfo = JSON.parse(localStorage.getItem("user_info"));
+  const companyId = companyInfo?.company_id;
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      setLoading(true);
+      try {
+        const response = await RequestAPI.getCompanyRequests(
+          companyId,
+          currentPage,
+          8
+        );
+        console.log(response);
+        const translatedData = response.data.requests.map((item) => ({
+          ...item,
+          total: parseInt(item.workingHours) * item.price,
+        }));
+        setData(translatedData);
+        setTotalPages(response.data.totalPages);
+      } catch (error) {
+        console.error("Failed to fetch requests:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (companyId) {
+      fetchRequests();
+    }
+  }, [companyId, currentPage]);
+
+  const validateWorkingHours = (workingHours) => {
+    return workingHours >= 1;
   };
 
-  const handleHoursChange = (id, value) => {
+  const updateRequestStatus = async (id, status, workingHours) => {
+    try {
+      setLoading(true);
+      await RequestAPI.updateStatusRQByCompany(
+        id,
+        parseInt(workingHours),
+        status
+      );
+      toast.success("Cập nhật trạng thái thành công");
+    } catch (error) {
+      console.error("Failed to update request status:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange = (id, value) => {
+    const item = data.find((item) => item.request_id === id);
+    if (value === "COMPLETED") {
+      if (!validateWorkingHours(item.workingHours)) {
+        toast.warning("Số giờ làm phải lớn hơn hoặc bằng 1 để hoàn thành.");
+        return;
+      }
+    }
+
     setData((prevData) =>
       prevData.map((item) =>
-        item.id === id ? { ...item, hours: Math.max(1, value) } : item
+        item.request_id === id ? { ...item, status: value } : item
       )
     );
+
+    // Gọi API để cập nhật trạng thái và số giờ
+    updateRequestStatus(id, value, item.workingHours);
   };
 
   const handleHoursIncrement = (event, id) => {
     event.stopPropagation();
     setData((prevData) =>
       prevData.map((item) =>
-        item.id === id ? { ...item, hours: item.hours + 1 } : item
+        item.request_id === id
+          ? { ...item, workingHours: parseInt(item.workingHours) + 1 }
+          : item
       )
     );
   };
@@ -138,7 +129,18 @@ export const ListRequest = () => {
     event.stopPropagation();
     setData((prevData) =>
       prevData.map((item) =>
-        item.id === id ? { ...item, hours: Math.max(1, item.hours - 1) } : item
+        item.request_id === id
+          ? { ...item, workingHours: Math.max(1, item.workingHours - 1) }
+          : item
+      )
+    );
+  };
+  const handleHoursChange = (id, value) => {
+    setData((prevData) =>
+      prevData.map((item) =>
+        item.request_id === id
+          ? { ...item, workingHours: Math.max(1, value) }
+          : item
       )
     );
   };
@@ -152,8 +154,34 @@ export const ListRequest = () => {
     setModalIsOpen(false);
   };
 
+  const closeandUpdate = (items) => {
+    if (!validateWorkingHours(items.workingHours)) {
+      toast.warning("Số giờ làm phải lớn hơn hoặc bằng 1 để hoàn thành.");
+      return;
+    }
+    setData((prevData) =>
+      prevData.map((item) =>
+        item.request_id === items.request_id
+          ? { ...item, status: "COMPLETED" }
+          : item
+      )
+    );
+    updateRequestStatus(items.request_id, "COMPLETED", items.workingHours);
+    closeModal();
+  };
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  // Filtered data based on search term
+  const filteredData = data.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
+      <ToastContainer />
       <h1 className="title-history">Lịch sử</h1>
       <div className="main">
         <div className="background-shadow">
@@ -165,6 +193,8 @@ export const ListRequest = () => {
                   type="text"
                   placeholder="Tìm khách hàng..."
                   aria-label="Search customer"
+                  value={searchTerm} // Controlled input
+                  onChange={(e) => setSearchTerm(e.target.value)} // Update search term
                 />
 
                 <div className="header-row">
@@ -174,101 +204,132 @@ export const ListRequest = () => {
                   <div className="cell-sub hour">Số giờ làm</div>
                   <div className="cell-sub cost">Giá</div>
                   <div className="cell-sub total-cost">Tổng tiền</div>
-                  <div className="cell-sub status">Trạng thái</div>
+                  <div className="cell-sub statusrq">Trạng thái</div>
                 </div>
               </div>
 
               <div className="table-body">
-                {data.map((item) => (
-                  <div
-                    className="row"
-                    key={item.id}
-                    onClick={() => openModal(item)}
-                  >
-                    <div className="cell account">
-                      <img
-                        className="avatar"
-                        alt={item.name}
-                        src={item.avatar}
-                      />
-                      {item.name}
-                    </div>
-                    <div className="cell phone">{item.phone}</div>
-                    <div className="cell date">{item.date}</div>
-                    <div className="cell hour">
-                      <div className="quantity-control">
-                        <button
-                          onClick={(event) =>
-                            handleHoursDecrement(event, item.id)
-                          }
-                        >
-                          <RemoveIcon />
-                        </button>
-                        <span>{item.hours}</span>
-                        <button
-                          onClick={(event) =>
-                            handleHoursIncrement(event, item.id)
-                          }
-                        >
-                          <AddIcon />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="cell price">
-                      {item.price.toLocaleString()}đ
-                    </div>
-                    <div className="cell total-price">
-                      {(item.hours * item.price).toLocaleString()}đ
-                    </div>
+                {loading ? (
+                  <LoadingOverlay loading={loading} />
+                ) : (
+                  filteredData.map((item) => (
                     <div
-                      className="cell status"
-                      onClick={(e) => e.stopPropagation()}
+                      className="row"
+                      key={item.request_id}
+                      onClick={() => openModal(item)}
                     >
-                      <Select
-                        value={item.status}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          handleStatusChange(item.id, e.target.value);
-                        }}
-                        sx={{
-                          "& .MuiSelect-select": {
-                            backgroundColor: statusColors[item.status],
-                            color: "white",
-                            border: "none",
-                            padding: "8px 16px",
-                            borderRadius: "4px",
-                            maxWidth: "86px",
-                            minWidth: "82px",
-                            textAlign: "center",
-                            paddingRight: "16px !important",
-                          },
-                          "& .MuiOutlinedInput-notchedOutline": {
-                            border: "none",
-                          },
-                          "& .MuiSvgIcon-root": {
-                            display: "none",
-                          },
-                        }}
+                      <div className="cell account">
+                        <img className="avatar" alt={item.name} src={avatar1} />
+                        {item.name}
+                      </div>
+                      <div className="cell phone">{item.phone}</div>
+                      <div className="cell date">{item.request_date}</div>
+                      <div className="cell hour">
+                        <div className="quantity-control">
+                          <button
+                            onClick={(event) =>
+                              handleHoursDecrement(event, item.request_id)
+                            }
+                          >
+                            <RemoveIcon />
+                          </button>
+                          <span>{parseInt(item.workingHours)}</span>
+                          <button
+                            onClick={(event) =>
+                              handleHoursIncrement(event, item.request_id)
+                            }
+                          >
+                            <AddIcon />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="cell cost">
+                        {parseFloat(item.price).toLocaleString()}đ
+                      </div>
+                      <div className="cell total-price">
+                        {(
+                          parseInt(item.workingHours) * item.price
+                        ).toLocaleString()}
+                        đ
+                      </div>
+                      <div
+                        className="cell status"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        {statusOptions.map((option) => (
-                          <MenuItem
-                            key={option}
-                            value={option}
+                        {item.status === "COMPLETED" ||
+                        item.status === "REJECTED" ? (
+                          <span
+                            style={{
+                              backgroundColor: statusColors[item.status],
+                              color: statusColors[item.status].replace(
+                                "0.5)",
+                                "1)"
+                              ),
+                              padding: "8px 16px",
+                              borderRadius: "4px",
+                              maxWidth: "86px",
+                              minWidth: "116px",
+                            }}
+                          >
+                            {translateStatus(item.status)}
+                          </span>
+                        ) : (
+                          <Select
+                            value={item.status}
+                            onChange={(e) => {
+                              e.stopPropagation();
+                              handleStatusChange(
+                                item.request_id,
+                                e.target.value
+                              );
+                            }}
                             sx={{
-                              backgroundColor: statusColors[option],
-                              color: "white",
-                              "&:hover": {
-                                backgroundColor: statusColors[option],
+                              "& .MuiSelect-select": {
+                                backgroundColor: statusColors[item.status],
+                                color: statusColors[item.status].replace(
+                                  "0.5)",
+                                  "1)"
+                                ),
+                                border: "none",
+                                padding: "8px 16px",
+                                borderRadius: "4px",
+                                maxWidth: "86px",
+                                minWidth: "82px",
+                                textAlign: "center",
+                                paddingRight: "16px !important",
+                              },
+                              "& .MuiOutlinedInput-notchedOutline": {
+                                border: "none",
+                              },
+                              "& .MuiSvgIcon-root": {
+                                display: "none",
                               },
                             }}
                           >
-                            {option}
-                          </MenuItem>
-                        ))}
-                      </Select>
+                            {statusOptions.map((option) => (
+                              <MenuItem
+                                key={option.value}
+                                value={option.value}
+                                sx={{
+                                  backgroundColor: statusColors[option.value],
+                                  color: statusColors[option.value].replace(
+                                    "0.5)",
+                                    "1)"
+                                  ),
+                                  "&:hover": {
+                                    backgroundColor: statusColors[option.value],
+                                  },
+                                }}
+                              >
+                                {option.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -276,13 +337,12 @@ export const ListRequest = () => {
 
         <div className="pagination-wrapper">
           <Pagination
-            componentName="Pagination"
             shape="rounded"
             size="medium"
             variant="outlined"
-            count="6"
-            //   page={currentPage}
-            //   onChange={handleChange}
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
           />
         </div>
       </div>
@@ -302,7 +362,11 @@ export const ListRequest = () => {
           },
         }}
       >
-        <RequestDetails item={selectedItem} onClose={closeModal} />
+        <RequestDetails
+          item={selectedItem}
+          onClose={closeModal}
+          onCloseandUpdate={closeandUpdate}
+        />
       </Modal>
     </>
   );
