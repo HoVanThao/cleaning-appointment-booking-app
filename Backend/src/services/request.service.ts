@@ -303,7 +303,6 @@ export class RequestService {
       .skip((page - 1) * limit) // Xác định vị trí bắt đầu
       .take(limit); // Số lượng bản ghi trả về
 
-    // Nếu có tên, thêm điều kiện tìm kiếm
     if (name) {
       queryBuilder.andWhere('request.name LIKE :name', {
         name: `%${name}%`,
@@ -311,15 +310,29 @@ export class RequestService {
     }
 
     const [requests, totalRequests] = await queryBuilder.getManyAndCount();
-
-    // Tính toán tổng số trang
     const totalPages = Math.ceil(totalRequests / limit);
+
+    // Định dạng lại thời gian của từng request
+    const formatTimejob = (date: Date) => {
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${hours}:${minutes} ${day}/${month}/${year}`;
+    };
+
+    // Cập nhật lại `timejob` cho từng request
+    const formattedRequests = requests.map(request => ({
+      ...request,
+      timejob: formatTimejob(new Date(request.timejob))
+    }));
 
     return {
       totalRequests,
       totalPages,
       currentPage: page,
-      requests,
+      requests: formattedRequests,
     };
   }
   async updateRequestByCompany(
