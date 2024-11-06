@@ -299,6 +299,7 @@ export class RequestService {
     const queryBuilder = requestRepository
       .createQueryBuilder('request')
       .where('request.company_id = :companyId', { companyId })
+      .orderBy('request.created_at', 'DESC')
       .skip((page - 1) * limit) // Xác định vị trí bắt đầu
       .take(limit); // Số lượng bản ghi trả về
 
