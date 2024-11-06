@@ -1,6 +1,9 @@
 .ReactModal__Content.ReactModal__Content--after-open{
     height: fit-content !important;
 }
+.ReactModal__Overlay.ReactModal__Overlay--after-open{
+  z-index: 1000 !important;
+}
 .company-modal-hon {
   background-color: #ffffff;
   display: flex;
@@ -50,15 +53,14 @@
   display: flex;
   align-items: center;
   margin-top: 20px;
-}
 
-.label {
+  .label {
   font-size: 14px;
   color: #333;
   margin-right: 10px;
 }
 
-.time-picker {
+.time-pick {
   display: flex;
   align-items: center;
   background-color: #f0f0f0;
@@ -70,6 +72,7 @@
   font-size: 16px;
   color: #333;
 }
+}
 
 .separator {
   margin: 0 5px;
@@ -79,17 +82,23 @@
 
 .status-section {
   margin-top: 20px;
-}
 
-.price {
-  font-size: 14px;
-  color: #333;
-  margin-bottom: 10px;
-}
+  .working-hours{
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 24px;
+  }
 
-.status {
-  font-size: 14px;
-  color: #333;
+  .price {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 24px;
+  }
+
+  .status {
+    font-size: 14px;
+    color: #333;
+  }
 }
 
 .status-label {
@@ -100,7 +109,9 @@
 .footer {
   display: flex;
   justify-content: flex-end;
+  gap:10px;
 }
+
 
 .complete-button {
   background-color: #e88080 !important;
@@ -108,4 +119,10 @@
   padding: 10px 20px;
   font-size: 14px;
   text-transform: none;
+}
+.reject-button{
+  background-color: #e88080 !important;
+}
+.accept-button{
+
 }

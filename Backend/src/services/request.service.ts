@@ -106,13 +106,16 @@ export class RequestService {
       .select([
         'request.request_id',
         'request.timejob',
+        'request.workingHours',
+        'request.status',
         'request.price',
         'request.request',
         'company.company_id',
         'company.company_name',
         'company.address_tinh',
         'company.main_image',
-      ]);
+      ])
+      .orderBy('request.timejob', 'DESC');
 
     if (startDate) {
       const parsedStartDate = new Date(startDate);
@@ -141,16 +144,18 @@ export class RequestService {
 
     const totalPages = Math.ceil(totalCompanies / limit);
 
-    const formattedCompanies = companies.map(company => ({
-      request_id: company.request_id,
-      price: company.price,
-      request: company.request,
-      timejob: company.timejob.toISOString().slice(0, 10),
+    const formattedCompanies = companies.map(request => ({
+      request_id: request.request_id,
+      price: request.price,
+      status: request.status,
+      request: request.request,
+      workingHours: request.workingHours,
+      timejob: request.timejob.toISOString().slice(0, 10),
       company: {
-        company_id: company.company.company_id,
-        company_name: company.company.company_name,
-        address_tinh: company.company.address_tinh,
-        main_image: company.company.main_image,
+        company_id: request.company.company_id,
+        company_name: request.company.company_name,
+        address_tinh: request.company.address_tinh,
+        main_image: request.company.main_image,
       },
     }));
 
@@ -180,6 +185,7 @@ export class RequestService {
         'request.request_id',
         'request.timejob',
         'request.status',
+        'request.name',
         'request.workingHours',
         'user.user_id',
         'user.full_name',
@@ -201,7 +207,9 @@ export class RequestService {
         // Tính toán timeWorking
         const startTime = new Date(request.timejob);
         const workingHours = request.workingHours;
-        const endTime = new Date(startTime.getTime() + workingHours * 60 * 60 * 1000);
+        const endTime = new Date(
+          startTime.getTime() + workingHours * 60 * 60 * 1000
+        );
 
         const formatTime = (date: Date) => {
           const hours = date.getHours().toString().padStart(2, '0');
@@ -209,8 +217,8 @@ export class RequestService {
           return `${hours}:${minutes}`;
         };
 
-        const timeWorking = `${formatTime(startTime)}-${formatTime(endTime)}`;
-
+        // const timeWorking = `${formatTime(startTime)}-${formatTime(endTime)}`;
+        const timeWorking = `${formatTime(startTime)}`;
         // Thêm timeWorking vào request
         (request as any).timeWorking = timeWorking;
 
@@ -241,7 +249,6 @@ export class RequestService {
     return weekData;
   }
 
-
   async getRequestDetailsById(id: number) {
     try {
       const requestDetails = await this.requestRepo
@@ -269,22 +276,28 @@ export class RequestService {
       }
 
       // Định dạng lại timejob
-      const formattedTimejob = new Date(requestDetails.timejob).toLocaleString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false // Nếu muốn định dạng 24 giờ
-      });
+      const formattedTimejob = new Date(requestDetails.timejob).toLocaleString(
+        'vi-VN',
+        {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false, // Nếu muốn định dạng 24 giờ
+        }
+      );
 
       return {
         ...requestDetails,
-        timejob: formattedTimejob // Trả về timejob đã định dạng
+        timejob: formattedTimejob, // Trả về timejob đã định dạng
       };
     } catch (error) {
       // Xử lý lỗi liên quan đến cơ sở dữ liệu hoặc truy vấn
-      throw new Error('Lỗi khi truy vấn yêu cầu: ' + (error instanceof Error ? error.message : 'lỗi không xác định'));
+      throw new Error(
+        'Lỗi khi truy vấn yêu cầu: ' +
+          (error instanceof Error ? error.message : 'lỗi không xác định')
+      );
     }
   }
 
@@ -299,10 +312,10 @@ export class RequestService {
     const queryBuilder = requestRepository
       .createQueryBuilder('request')
       .where('request.company_id = :companyId', { companyId })
+      .orderBy('request.created_at', 'DESC')
       .skip((page - 1) * limit) // Xác định vị trí bắt đầu
       .take(limit); // Số lượng bản ghi trả về
 
-    // Nếu có tên, thêm điều kiện tìm kiếm
     if (name) {
       queryBuilder.andWhere('request.name LIKE :name', {
         name: `%${name}%`,
@@ -310,15 +323,29 @@ export class RequestService {
     }
 
     const [requests, totalRequests] = await queryBuilder.getManyAndCount();
-
-    // Tính toán tổng số trang
     const totalPages = Math.ceil(totalRequests / limit);
+
+    // Định dạng lại thời gian của từng request
+    const formatTimejob = (date: Date) => {
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      return `${hours}:${minutes} ${day}/${month}/${year}`;
+    };
+
+    // Cập nhật lại `timejob` cho từng request
+    const formattedRequests = requests.map(request => ({
+      ...request,
+      timejob: formatTimejob(new Date(request.timejob)),
+    }));
 
     return {
       totalRequests,
       totalPages,
       currentPage: page,
-      requests,
+      requests: formattedRequests,
     };
   }
   async updateRequestByCompany(
@@ -377,4 +404,88 @@ export class RequestService {
     return request; // Trả về yêu cầu hoặc null nếu không tìm thấy
   }
 
+  // thảo - sprint 3
+  async getUserRequestsForWeekService(
+    userId: number,
+    startDate: Date,
+    endDate: Date
+  ) {
+    const query: SelectQueryBuilder<Request> = this.requestRepo
+      .createQueryBuilder('request')
+      .leftJoinAndSelect('request.user', 'user')
+      .leftJoinAndSelect('request.company', 'company')
+      .where('DATE(request.timejob) BETWEEN :startDate AND :endDate', {
+        startDate: startDate.toISOString().split('T')[0],
+        endDate: endDate.toISOString().split('T')[0],
+      })
+      .andWhere('request.user_id = :userId', { userId })
+      .select([
+        'request.request_id',
+        'request.timejob',
+        'request.status',
+        'request.name',
+        'request.notes',
+        'request.request',
+        'request.workingHours',
+        'user.user_id',
+        'user.full_name',
+      ]);
+
+    const requests = await query.getMany();
+
+    // Tổ chức dữ liệu theo ngày trong tuần
+    const weekData: { [key in DayOfWeekEnum]?: Request[] } = {};
+
+    Object.values(DayOfWeekEnum).forEach(day => {
+      weekData[day] = [];
+    });
+
+    requests.forEach(request => {
+      const dayOfWeek = new Date(request.timejob).getDay();
+      const dayKey = dayOfWeekMap[dayOfWeek];
+      if (dayKey && weekData[dayKey]) {
+        // Tính toán timeWorking
+        const startTime = new Date(request.timejob);
+        const workingHours = request.workingHours;
+        const endTime = new Date(
+          startTime.getTime() + workingHours * 60 * 60 * 1000
+        );
+
+        const formatTime = (date: Date) => {
+          const hours = date.getHours().toString().padStart(2, '0');
+          const minutes = date.getMinutes().toString().padStart(2, '0');
+          return `${hours}:${minutes}`;
+        };
+
+        // const timeWorking = `${formatTime(startTime)}-${formatTime(endTime)}`;
+        const timeWorking = `${formatTime(startTime)}`;
+        // Thêm timeWorking vào request
+        (request as any).timeWorking = timeWorking;
+
+        // Định dạng timejob
+        const formatDate = (date: Date) => {
+          const day = date.getDate().toString().padStart(2, '0');
+          const month = (date.getMonth() + 1).toString().padStart(2, '0'); // tháng bắt đầu từ 0
+          const year = date.getFullYear();
+          return `${formatTime(date)} ${day}/${month}/${year}`;
+        };
+
+        (request as any).timejob = formatDate(new Date(request.timejob)); // cập nhật timejob
+
+        weekData[dayKey]?.push(request);
+      }
+    });
+
+    // Sắp xếp các công việc theo thời gian bắt đầu và request_id
+    Object.keys(weekData).forEach(day => {
+      weekData[day as DayOfWeekEnum]?.sort((a, b) => {
+        if (a.timejob === b.timejob) {
+          return a.request_id - b.request_id;
+        }
+        return new Date(a.timejob).getTime() - new Date(b.timejob).getTime();
+      });
+    });
+
+    return weekData;
+  }
 }
